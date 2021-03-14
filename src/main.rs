@@ -7,15 +7,6 @@
 use core::panic::PanicInfo;
 use nach_os::println;
 
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    println!("Hello World{}", "!");
-
-    #[cfg(test)]
-    test_main();
-
-    loop {}
-}
 
 /// This function is called on panic.
 #[cfg(not(test))]
@@ -29,4 +20,18 @@ fn panic(info: &PanicInfo) -> ! {
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
     nach_os::test_panic_handler(info)
+}
+
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    println!("Hello World{}", "!");
+
+    nach_os::init();
+    x86_64::instructions::interrupts::int3();
+
+    #[cfg(test)]
+    test_main();
+
+    println!("It did not crash!");
+    loop {}
 }
