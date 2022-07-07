@@ -4,9 +4,28 @@
 #![test_runner(nach_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-use core::panic::PanicInfo;
 use nach_os::println;
+use core::panic::PanicInfo;
 
+#[no_mangle]
+pub extern "C" fn _start() -> ! {
+    println!("Hello World{}", "!");
+
+    nach_os::init();
+
+    fn stack_overflow() {
+        stack_overflow(); // for each recursion, the return address is pushed
+    }
+
+    // uncomment line below to trigger a stack overflow
+    //stack_overflow();
+
+    #[cfg(test)]
+    test_main();
+
+    println!("It did not crash!");
+    loop {}
+}
 
 /// This function is called on panic.
 #[cfg(not(test))]
@@ -22,16 +41,7 @@ fn panic(info: &PanicInfo) -> ! {
     nach_os::test_panic_handler(info)
 }
 
-#[no_mangle]
-pub extern "C" fn _start() -> ! {
-    println!("Hello World{}", "!");
-
-    nach_os::init();
-    x86_64::instructions::interrupts::int3();
-
-    #[cfg(test)]
-    test_main();
-
-    println!("It did not crash!");
-    loop {}
+#[test_case]
+fn trivial_assertion() {
+    assert_eq!(1, 1);
 }
