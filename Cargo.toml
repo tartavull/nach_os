@@ -4,6 +4,13 @@ version = "0.1.0"
 authors = ["Ignacio Tartavull <tartavull@gmail.com>"]
 edition = "2018"
 
+[[bin]]
+name = "nach_os"
+path = "kernel/main.rs"
+
+[lib]
+path = "kernel/lib.rs"
+
 [[test]]
 name = "should_panic"
 harness = false
