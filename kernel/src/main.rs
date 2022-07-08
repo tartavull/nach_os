@@ -4,41 +4,32 @@
 #![test_runner(nach_os::test_runner)]
 #![reexport_test_harness_main = "test_main"]
 
-use nach_os::println;
+extern crate userland;
+
 use core::panic::PanicInfo;
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!("Hello World{}", "!");
+    kernel::println!("nachos");
+    kernel::init();
 
-    nach_os::init();
+    kernel::scheduler::create_process(&userland::shell::_start);
 
-    fn stack_overflow() {
-        stack_overflow(); // for each recursion, the return address is pushed
-    }
-
-    // uncomment line below to trigger a stack overflow
-    //stack_overflow();
-
-    #[cfg(test)]
-    test_main();
-
-    println!("It did not crash!");
-    nach_os::hlt_loop();
+    kernel::hlt_loop();
 }
 
 /// This function is called on panic.
 #[cfg(not(test))]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    println!("{}", info);
-    nach_os::hlt_loop();
+    kernel::println!("{}", info);
+    kernel::hlt_loop();
 }
 
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    nach_os::test_panic_handler(info)
+    kernel::test_panic_handler(info)
 }
 
 #[test_case]
