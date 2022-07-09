@@ -8,6 +8,7 @@ extern crate alloc;
 
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
+use kernel::test_framework::test_panic_handler;
 
 entry_point!(main);
 fn main(boot_info: &'static BootInfo) -> ! {
@@ -31,7 +32,7 @@ fn main(boot_info: &'static BootInfo) -> ! {
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    kernel::test_panic_handler(info)
+    test_panic_handler(info)
 }
 
 use alloc::boxed::Box;

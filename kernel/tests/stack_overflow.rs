@@ -2,7 +2,8 @@
 #![no_main]
 #![feature(abi_x86_interrupt)]
 
-use kernel::{exit_qemu, serial_print, serial_println, QemuExitCode};
+use kernel::{serial_print, serial_println};
+use kernel::test_framework::{exit_qemu, QemuExitCode, test_panic_handler};
 use core::panic::PanicInfo;
 use lazy_static::lazy_static;
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
@@ -54,5 +55,5 @@ extern "x86-interrupt" fn test_double_fault_handler(
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    kernel::test_panic_handler(info)
+    test_panic_handler(info)
 }

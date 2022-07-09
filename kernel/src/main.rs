@@ -13,6 +13,7 @@ use x86_64::VirtAddr;
 use kernel::memory;
 use kernel::memory::BootInfoFrameAllocator;
 use kernel::println;
+use kernel::test_framework::test_panic_handler;
 
 use alloc::{boxed::Box, vec, vec::Vec, rc::Rc};
 
@@ -49,6 +50,9 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     core::mem::drop(reference_counted);
     println!("reference count is {} now", Rc::strong_count(&cloned_reference));
 
+    #[cfg(test)]
+    test_main();
+
     kernel::hlt_loop();
 }
 
@@ -62,10 +66,5 @@ fn panic(info: &PanicInfo) -> ! {
 #[cfg(test)]
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    kernel::test_panic_handler(info)
-}
-
-#[test_case]
-fn trivial_assertion() {
-    assert_eq!(1, 1);
+    test_panic_handler(info)
 }
