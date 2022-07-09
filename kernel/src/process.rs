@@ -3,6 +3,6 @@
 
 #[derive(Debug)]
 pub struct Process {
-    id: u64,
-    active: bool,
+    _id: u64,
+    _active: bool,
 }
