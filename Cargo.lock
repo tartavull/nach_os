@@ -85,6 +85,9 @@ dependencies = [
 [[package]]
 name = "userland"
 version = "0.1.0"
+dependencies = [
+ "x86_64",
+]
 
 [[package]]
 name = "volatile"

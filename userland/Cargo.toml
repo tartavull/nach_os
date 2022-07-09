@@ -4,4 +4,8 @@ version = "0.1.0"
 authors = ["Ignacio Tartavull <tartavull@gmail.com>"]
 edition = "2018"
 
+[lib]
+name = "userland"
 
+[dependencies]
+x86_64 = "0.14.2"
