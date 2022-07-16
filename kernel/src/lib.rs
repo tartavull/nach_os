@@ -18,6 +18,7 @@ pub mod scheduler;
 pub mod process;
 pub mod allocator;
 pub mod test_framework;
+pub mod task;
 
 use crate::test_framework::{Testable, exit_qemu, QemuExitCode};
 
