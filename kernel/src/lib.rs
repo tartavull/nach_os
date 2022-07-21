@@ -10,6 +10,7 @@
 extern crate alloc;
 
 pub mod serial;
+pub mod logger;
 pub mod vga_buffer;
 pub mod interrupts;
 pub mod gdt;

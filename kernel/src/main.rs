@@ -15,12 +15,19 @@ use kernel::memory::BootInfoFrameAllocator;
 use kernel::println;
 use kernel::test_framework::test_panic_handler;
 use kernel::task::{Task, keyboard, executor::Executor};
+use kernel::logger;
+
 
 entry_point!(kernel_main);
 fn kernel_main(boot_info: &'static BootInfo) -> ! {
-    println!("nachos");
     kernel::init();
     kernel::scheduler::create_process(&userland::shell::_start);
+
+    logger::print_logo();
+    logger::debug("Hello Serial!");
+    logger::info("Hello Serial!");
+    logger::warning("Hello Serial!");
+    logger::error("Hello Serial!");
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
     let mut mapper = unsafe { memory::init(phys_mem_offset) };
