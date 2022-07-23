@@ -45,7 +45,10 @@ pub fn write_msg(msg: &str) {
     // And https://github.com/vinaychandra/MoonDustKernel/blob/master/src/common/memory/paging.rs
     use core::arch::asm;
     unsafe {
-        //asm!("syscall");
+        asm!(
+            "mov rax, 1",
+            "int 0x80",
+        );
     }
     // This triggers the invalid opcode exception
 }

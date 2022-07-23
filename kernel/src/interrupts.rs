@@ -1,10 +1,8 @@
-use crate::{gdt, println, scheduler};
+use crate::{gdt, println, scheduler, process};
 use lazy_static::lazy_static;
 use x86_64::structures::idt::{InterruptDescriptorTable, InterruptStackFrame};
 use pic8259::ChainedPics;
 use x86_64::instructions::port::Port;
-
-
 
 pub fn init_idt() {
     IDT.load();
@@ -24,7 +22,42 @@ extern "x86-interrupt" fn breakpoint_handler(stack_frame: InterruptStackFrame) {
     println!("EXCEPTION: BREAKPOINT\n{:#?}", stack_frame);
 }
 
+extern "x86-interrupt" fn syscall_handler(stack_frame: InterruptStackFrame) {
+    use core::arch::asm;
 
+    let rax: u64; // system call number
+    let rcx: u64; // return address
+    let r11: u64; // saved rflags
+    let rdi: u64; // arg0
+    let rsi: u64; // arg1
+    let rdx: u64; // arg2
+    let r10: u64; // arg3
+    let r9: u64;  // arg4
+    let r8: u64;  // arg5
+    unsafe {
+        asm!(
+            "mov {}, rax", 
+            "mov {}, rcx",
+            "mov {}, r11",
+            "mov {}, rdi",
+            "mov {}, rsi",
+            "mov {}, rdx",
+            "mov {}, r10",
+            "mov {}, r9",
+            "mov {}, r8",
+             out(reg) rax,
+             out(reg) rcx,
+             out(reg) r11,
+             out(reg) rdi,
+             out(reg) rsi,
+             out(reg) rdx,
+             out(reg) r10,
+             out(reg) r9,
+             out(reg) r8,
+        );
+    }
+    process::syscall_interrupt(rax, rcx, r11, &[rdi, rsi, rdx, r10, r9, r8]);
+}
 
 extern "x86-interrupt" fn double_fault_handler(
     stack_frame: InterruptStackFrame,
@@ -114,6 +147,7 @@ lazy_static! {
             .set_handler_fn(timer_interrupt_handler);
         idt[InterruptIndex::Keyboard.as_usize()]
             .set_handler_fn(keyboard_interrupt_handler);
+        idt[0x80].set_handler_fn(syscall_handler);
         idt
     };
 }
