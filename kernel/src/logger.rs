@@ -1,4 +1,5 @@
 use crate::{serial_print,serial_println};
+use crate::serial::print;
 
 const Green: &str = "\u{001b}[32m";
 const White: &str = "\u{001b}[37m";
@@ -19,25 +20,56 @@ enum Color {
     White,
 }
 
+
+#[macro_export]
 macro_rules! color {
     ($color_code:expr) => ( concat!("\u{001b}[3", $color_code, "m") )
 }
 
-
-pub fn debug(msg: &str) {
-    serial_print!("{}debug:{} {}\n", color!(2), color!(7), msg);
+pub fn _log(color: &str, name: &str, args: ::core::fmt::Arguments) {
+    serial_print!("{}{}:{} ", color, name, color!(7));
+    crate::serial::print(args);
+    serial_println!();
 }
 
-pub fn info(msg: &str) {
-    serial_print!("{}info:{} {}\n", color!(4), color!(7), msg);
+#[macro_export]
+macro_rules! debug {
+    ($($arg:tt)*) => {
+        $crate::logger::_log(
+            $crate::color!(2),
+            "debug",
+            format_args!($($arg)*));
+    };
 }
 
-pub fn warning(msg: &str) {
-    serial_print!("{}warning:{} {}\n", color!(3), color!(7), msg);
+#[macro_export]
+macro_rules! info {
+    ($($arg:tt)*) => {
+        $crate::logger::_log(
+            $crate::color!(4),
+            "info",
+            format_args!($($arg)*));
+    };
 }
 
-pub fn error(msg: &str) {
-    serial_print!("{}error:{} {}\n", color!(1), color!(7), msg);
+#[macro_export]
+macro_rules! warning {
+    ($($arg:tt)*) => {
+        $crate::logger::_log(
+            $crate::color!(3),
+            "warning",
+            format_args!($($arg)*));
+    };
+}
+
+#[macro_export]
+macro_rules! error {
+    ($($arg:tt)*) => {
+        $crate::logger::_log(
+            $crate::color!(1),
+            "error",
+            format_args!($($arg)*));
+    };
 }
 
 pub fn print_logo() {
@@ -142,4 +174,5 @@ pub fn print_logo() {
             &S[start..end]
             );
     }
+    serial_print!("\n\n");
 }
