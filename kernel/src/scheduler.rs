@@ -1,4 +1,4 @@
-use crate::{print, println, process};
+use crate::{print, println, debug, process};
 
 // We probably want to have some sort of heap from which we take out
 // the element from highest priority, execute it, and then put it back to the bottom
@@ -6,7 +6,7 @@ use crate::{print, println, process};
 pub fn step() {
     // 1. Find the highest priority process to run
     // context switch to them
-    print!(".");
+    //print!(".");
 }
 
 // As the call stack can be very large, the operating system typically sets up a separate call
@@ -24,5 +24,5 @@ fn context_switch(p: process::Process) {
 pub fn create_process(_start: &dyn Fn()) {
     // we should pass a function that starts the program.
     _start();
-    println!("scheduler: process created: \n");
+    debug!("scheduler: process created: \n");
 }

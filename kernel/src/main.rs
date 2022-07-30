@@ -23,9 +23,6 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     kernel::init();
     logger::print_logo();
 
-
-    kernel::scheduler::create_process(&userland::shell::_start);
-
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
     let mut mapper = unsafe { memory::init(phys_mem_offset) };
     let mut frame_allocator = unsafe {
@@ -34,10 +31,13 @@ fn kernel_main(boot_info: &'static BootInfo) -> ! {
     kernel::allocator::init_heap(&mut mapper, &mut frame_allocator)
         .expect("heap initialization failed");
 
+    kernel::scheduler::create_process(&userland::shell::_start);
+
     let mut executor = Executor::new();
     executor.spawn(Task::new(example_task()));
     executor.spawn(Task::new(keyboard::print_keypresses()));
     executor.run();
+
 
     #[cfg(test)]
     test_main();

@@ -43,14 +43,23 @@ pub fn write_msg(msg: &str) {
     //and print this message for us
     // See https://stackoverflow.com/questions/18717016/what-are-ring-0-and-ring-3-in-the-context-of-operating-systems
     // And https://github.com/vinaychandra/MoonDustKernel/blob/master/src/common/memory/paging.rs
+    syscall(1, msg.as_ptr() as u64, msg.len() as u64);
+
+}
+
+pub fn syscall(call_number: u64, arg0: u64, arg1: u64) {
     use core::arch::asm;
     unsafe {
         asm!(
-            "mov rax, 1",
+            "mov rax, {}",
+            "mov rcx, {}",
+            "mov rdx, {}",  
             "int 0x80",
+            in(reg) call_number,
+            in(reg) arg0,
+            in(reg) arg1,
         );
     }
-    // This triggers the invalid opcode exception
 }
 
 pub fn write_error(msg: &str) {

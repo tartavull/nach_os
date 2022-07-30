@@ -1,6 +1,7 @@
 // This will create a process that responds to keyboard events.
-use crate::write_msg;
+use crate::{write_msg, syscall};
 
 pub fn _start() {
-    write_msg("hello from shell!");
+    write_msg("it@nachos -> ");
 }
+
